@@ -271,12 +271,38 @@ function runUnitTests() {
          "    }\n" +
          "    new test3;\n" + 
          "}\n"),
+
+        // --- decaf extensions ---
+
+        // @foo
+        ["@foo", "this.foo;\n"],
+        ["@foo.bar", "this.foo.bar;\n"],
+        ["x.y(@foo.bar(baz))", "x.y(this.foo.bar(baz));\n"],
+
+        // spread
+        ["x(...y)", "x.apply(undefined, y);\n"],
+        ["x(y, ...z)", "x.apply(undefined, [y].concat([].slice.call(z)));\n"],
+        ["x(y, z, ...a)", "x.apply(undefined, [y, z].concat([].slice.call(a)));\n"],
+        ["x.y(...z)", "x.y.apply(x, z);\n"],
+        ["x.y(z, ...a)", "x.y.apply(x, [z].concat([].slice.call(a)));\n"],
+        ["x.y(z, a, ...b)", "x.y.apply(x, [z, a].concat([].slice.call(b)));\n"],
+        ["x.y.z(...a)", "(var _ref=x.y).z.apply(_ref, a);\n"],
+        ["x.y.z(a, ...b)", "(var _ref=x.y).z.apply(_ref, [a].concat([].slice.call(b)));\n"],
+        ["x.y.z(a, b, ...c)", "(var _ref=x.y).z.apply(_ref, [a, b].concat([].slice.call(c)));\n"],
+        ["@x.y.z(a, b, ...c)", "(var _ref=this.x.y).z.apply(_ref, [a, b].concat([].slice.call(c)));\n"],
+        ["x.y.z(a, @b, ...c)", "(var _ref=x.y).z.apply(_ref, [a, this.b].concat([].slice.call(c)));\n"],
     ];
 
     for (var i = 0; i < tests.length; i++) {
-        var b = tests[i], a;
         try {
-            a = Reflect.stringify(Reflect.parse(b, {loc: false}));
+            if (typeof tests[i] === "string") {
+              var b = tests[i], a;
+              a = Reflect.stringify(Reflect.parse(b, {loc: false}));
+            } else {
+              var b = tests[i][1], a;
+              a = Reflect.stringify(Reflect.parse(tests[i][0], {loc: false}));
+            }
+
             if (typeof a !== "string") {
                 throw new TypeError("Reflect.stringify returned " +
                                     (a !== null && typeof a === "object"

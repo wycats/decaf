@@ -241,6 +241,8 @@ MemberExpr
     | FunctionExpr
     | MemberExpr '[' Expr ']'
       { $$ = yy.Node('MemberExpression',$1,$3,true,yy.loc([@$,@4])); }
+    | AT_THISTOKEN IdentifierName
+      { $$ = yy.Node('MemberExpression',yy.Node('ThisExpression'),yy.Node('Identifier', String($2)),false,yy.loc([@$,@2])); }
     | MemberExpr '.' IdentifierName
       { $$ = yy.Node('MemberExpression',$1,yy.Node('Identifier', String($3)),false,yy.loc([@$,@3])); }
     | NEW MemberExpr Arguments
@@ -251,6 +253,8 @@ MemberExprNoBF
     : PrimaryExprNoBrace
     | MemberExprNoBF '[' Expr ']'
       { $$ = yy.Node('MemberExpression',$1,$3,true,yy.loc([@$,@4])); }
+    | AT_THISTOKEN IdentifierName
+      { $$ = yy.Node('MemberExpression',yy.Node('ThisExpression'),yy.Node('Identifier', String($2)),false,yy.loc([@$,@2])); }
     | MemberExprNoBF '.' IdentifierName
       { $$ = yy.Node('MemberExpression',$1,yy.Node('Identifier', String($3)),false,yy.loc([@$,@3])); }
     | NEW MemberExpr Arguments

@@ -142,6 +142,7 @@ RCLASS "["({BSL}|[^\\\]])*"]"
 "static"                return 'STATIC'
 "yield"                 return 'YIELD'
 "this"                  return 'THISTOKEN'
+"@"                     return 'AT_THISTOKEN'
 "true"                  return 'TRUETOKEN'
 "false"                 return 'FALSETOKEN'
 "null"                  return 'NULLTOKEN'
