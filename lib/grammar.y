@@ -303,6 +303,10 @@ ArgumentList
       { $$ = [$1]; }
     | ArgumentList ',' AssignmentExpr
       { $$ = $1; $$.push($3); }
+    | ArgumentList ',' SPREAD AssignmentExpr
+      { $$ = $1; $$.push(yy.Node('Spread', $4, yy.loc(@4))); }
+    | SPREAD AssignmentExpr
+      { $$ = [yy.Node('Spread', $2, yy.loc(@2))]; }
     ;
 
 LeftHandSideExpr
@@ -1081,6 +1085,8 @@ FormalParameterList
       { $$ = $1; $$.push(yy.Node('Identifier', $3,yy.loc(@3))); }
     | FormalParameterList ',' Pattern
       { $$ = $1; $$.push($3); }
+    | FormalParameterList ',' SPREAD IDENT
+      { $$ = $1; $$.push(yy.Node('Spread', $4, yy.loc(@4))); }
     ;
 
 FunctionBody

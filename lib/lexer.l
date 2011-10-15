@@ -58,6 +58,7 @@ RCLASS "["({BSL}|[^\\\]])*"]"
 "("                     return '('
 ")"                     return ')'
 ","                     return ','
+"..."/((#{IDS})+(#{IDS}|[0-9])*) return 'SPREAD'
 "."                     return '.'
 ";"                     yy.ASI = false; return ';'
 ":"                     return ':'
