@@ -72,6 +72,7 @@ Keyword
     | BREAK
     | CASE
     | CATCH
+    | CLASS
     | CONSTTOKEN
     | CONTINUE
     | DEBUGGER
@@ -133,7 +134,7 @@ Property
     | IDENT ':' AssignmentExpr
       { yy.locComb(@$,@3);$$ = {key:yy.Node('Identifier', $1,yy.loc(@1)),value:$3,kind: "init"}; }
     | Keyword ':' AssignmentExpr
-      { yy.locComb(@$,@3);$$ = {key:yy.Node('Identifier', $1,yy.loc(@1)),value:$3,kind: "init"}; }
+      { yy.locComb(@$,@3);$$ = {key:yy.Node('Literal', String($1),yy.loc(@1)),value:$3,kind: "init"}; }
     | STRING ':' AssignmentExpr
       { yy.locComb(@$,@3);$$ = {key:yy.Node('Literal', String($1),yy.loc(@1)),value:$3,kind: "init"}; }
     | NUMBER ':' AssignmentExpr

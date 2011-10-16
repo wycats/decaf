@@ -146,7 +146,7 @@ RCLASS "["({BSL}|[^\\\]])*"]"
 "void"                  return 'VOIDTOKEN'
 "while"                 return 'WHILE'
 "with"                  return 'WITH'
-"class"                 return 'WITH'
+"class"                 return 'CLASS'
 "const"                 return 'CONSTTOKEN'
 <for>"const"            { this.popState(); return 'CONSTTOKEN'; }
 "enum"                  return 'ENUM'

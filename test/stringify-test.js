@@ -313,7 +313,10 @@ function runUnitTests() {
           "        continue;\n" +
           "    }\n" +
           "    console.log(foo);\n" +
-          "}\n")]
+          "}\n")],
+
+        // safe reserved property name
+        ['({class: "foo"});\n', '({"class": "foo"});\n']
     ];
 
     for (var i = 0; i < tests.length; i++) {
