@@ -128,6 +128,7 @@ function runUnitTests() {
          "    ;\n"),
         ("for (var i in arr)\n" +
          "    dump(arr[i]);\n"),
+        ("for (own in boo)\n    ;\n"),
         ('for ([k, v] in items(x))\n' +
          '    dump(k + ": " + v);\n'),
         ("if (x) {\n" +

@@ -863,9 +863,7 @@ IfStatement
     ;
 
 IterationStatement
-    : FOR '(' OWN LeftHandSideExpr INTOKEN Expr ')' Statement
-      { $$ = yy.Node('ForInStatement', $LeftHandSideExpr, $Expr, $Statement, 'own', yy.loc([@$,@8])); }
-    | DO Statement WHILE '(' Expr ')' ';'
+    : DO Statement WHILE '(' Expr ')' ';'
       { $$ = yy.Node('DoWhileStatement', $Statement, $Expr,yy.loc([@$,@7])); }
     | DO Statement WHILE '(' Expr ')' error
       { $$ = yy.Node('DoWhileStatement', $Statement, $Expr,yy.loc([@$,@6])); }
@@ -888,6 +886,11 @@ IterationStatement
     | FOR '(' LeftHandSideExpr INTOKEN Expr ')' Statement
       { $$ = yy.Node('ForInStatement',
                 $LeftHandSideExpr, $Expr, $Statement, null, yy.loc([@$,@7])); }
+    | FOR '(' OWN INTOKEN Expr ')' Statement
+      { $$ = yy.Node('ForInStatement',
+                yy.Node('Identifier', $3,yy.loc(@3)), $Expr, $Statement, null, yy.loc([@$,@7])); }
+    | FOR '(' OWN LeftHandSideExpr INTOKEN Expr ')' Statement
+      { $$ = yy.Node('ForInStatement', $LeftHandSideExpr, $Expr, $Statement, 'own', yy.loc([@$,@8])); }
     | FOR '(' VarOrLet Expr ')' Statement
       { $$ = yy.Node('ForInStatement', $3,
                   $Expr, $Statement, null, yy.loc([@$,@6])); }

@@ -6,6 +6,8 @@ IDS  [a-zA-Z$_]|"\u"[a-fA-F0-9]{4}
 BSL  "\\".
 RCLASS "["({BSL}|[^\\\]])*"]"
 
+%x for
+
 %%
 
 ";"\s+/("++"|"--")      return ';'
@@ -52,10 +54,26 @@ RCLASS "["({BSL}|[^\\\]])*"]"
 
 
 "{"                     return 'OPENBRACE'
+<for>"{"                this.popState(); return 'OPENBRACE';
 "}"                     return 'CLOSEBRACE'
 "["                     return '['
+<for>"["                this.popState(); return '['
 "]"                     return ']'
 "("                     return '('
+
+<for>"("                %{
+  if (yy.sawParen) {
+    this.popState();
+  } else {
+    yy.sawParen = true;
+  }
+
+  return '(';
+%}
+
+<for>\s+                yy.ASI = false;
+<for>";"                this.popState(); yy.ASI = false; return ";"
+
 ")"                     return ')'
 ","                     return ','
 "..."/((#{IDS})+(#{IDS}|[0-9])*) return 'SPREAD'
@@ -109,25 +127,28 @@ RCLASS "["({BSL}|[^\\\]])*"]"
 "do"                    return 'DO'
 "else"                  return 'ELSE'
 "finally"               return 'FINALLY'
-"for"                   return 'FOR'
-"own"                   return 'OWN'
+"for"                   { this.begin("for"); yy.sawParen = false; return 'FOR'; }
+<for>"own"              { this.popState(); return 'OWN'; }
 "function"              return 'FUNCTION'
 "if"                    return 'IF'
 "in"                    return 'INTOKEN'
 "instanceof"            return 'INSTANCEOF'
-"new"                   return 'NEW'
+"new"                   { return 'NEW'; }
+<for>"new"              { this.popState(); return 'NEW'; }
 "return"                yy.ASI = true; return 'RETURN'
 "switch"                return 'SWITCH'
 "try"                   return 'TRY'
 "catch"                 return 'CATCH'
 "throw"                 yy.ASI = true; return 'THROW'
 "typeof"                return 'TYPEOF'
-"var"                   return 'VAR'
+"var"                   return 'VAR';
+<for>"var"              { this.popState(); return 'VAR'; }
 "void"                  return 'VOIDTOKEN'
 "while"                 return 'WHILE'
 "with"                  return 'WITH'
 "class"                 return 'WITH'
 "const"                 return 'CONSTTOKEN'
+<for>"const"            { this.popState(); return 'CONSTTOKEN'; }
 "enum"                  return 'ENUM'
 "export"                return 'EXPORT'
 "extends"               return 'EXTENDS'
@@ -136,6 +157,7 @@ RCLASS "["({BSL}|[^\\\]])*"]"
 "implements"            return 'IMPLEMENTS'
 "interface"             return 'INTERFACE'
 "let"                   return 'LET'
+<for>"let"              { this.popState(); return 'LET' }
 "package"               return 'PACKAGE'
 "private"               return 'PRIVATE'
 "protected"             return 'PROTECTED'
@@ -148,6 +170,7 @@ RCLASS "["({BSL}|[^\\\]])*"]"
 "false"                 return 'FALSETOKEN'
 "null"                  return 'NULLTOKEN'
 ({IDS})+({IDS}|[0-9])*  return 'IDENT';
+<for>({IDS})+({IDS}|[0-9])*  { this.popState(); return 'IDENT'; }
 .                       return 'INVALID'
 
 %%
