@@ -110,6 +110,7 @@ RCLASS "["({BSL}|[^\\\]])*"]"
 "else"                  return 'ELSE'
 "finally"               return 'FINALLY'
 "for"                   return 'FOR'
+"own"                   return 'OWN'
 "function"              return 'FUNCTION'
 "if"                    return 'IF'
 "in"                    return 'INTOKEN'

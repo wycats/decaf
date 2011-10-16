@@ -286,11 +286,33 @@ function runUnitTests() {
         ["x.y(...z)", "x.y.apply(x, z);\n"],
         ["x.y(z, ...a)", "x.y.apply(x, [z].concat([].slice.call(a)));\n"],
         ["x.y(z, a, ...b)", "x.y.apply(x, [z, a].concat([].slice.call(b)));\n"],
-        ["x.y.z(...a)", "(var _ref=x.y).z.apply(_ref, a);\n"],
-        ["x.y.z(a, ...b)", "(var _ref=x.y).z.apply(_ref, [a].concat([].slice.call(b)));\n"],
-        ["x.y.z(a, b, ...c)", "(var _ref=x.y).z.apply(_ref, [a, b].concat([].slice.call(c)));\n"],
-        ["@x.y.z(a, b, ...c)", "(var _ref=this.x.y).z.apply(_ref, [a, b].concat([].slice.call(c)));\n"],
-        ["x.y.z(a, @b, ...c)", "(var _ref=x.y).z.apply(_ref, [a, this.b].concat([].slice.call(c)));\n"],
+        ["x.y.z(...a)", "var _ref;\n(_ref=x.y).z.apply(_ref, a);\n"],
+        ["x.y.z(a, ...b)", "var _ref;\n(_ref=x.y).z.apply(_ref, [a].concat([].slice.call(b)));\n"],
+        ["x.y.z(a, b, ...c)", "var _ref;\n(_ref=x.y).z.apply(_ref, [a, b].concat([].slice.call(c)));\n"],
+        ["@x.y.z(a, b, ...c)", "var _ref;\n(_ref=this.x.y).z.apply(_ref, [a, b].concat([].slice.call(c)));\n"],
+        ["x.y.z(a, @b, ...c)", "var _ref;\n(_ref=x.y).z.apply(_ref, [a, this.b].concat([].slice.call(c)));\n"],
+
+        // for (own foo in bar)
+        [("for (own foo in bar) {\n" +
+          "    console.log(foo);\n" +
+          "}"),
+         ("for (foo in bar) {\n" +
+          "    if (!bar.hasOwnProperty(foo)) {\n" +
+          "        continue;\n" +
+          "    }\n" +
+          "    console.log(foo);\n" +
+          "}\n")],
+        [("for (own foo in bar.baz()) {\n" +
+          "    console.log(foo);\n" +
+          "}"),
+         ("var _ref;\n" +
+          "_ref = bar.baz();\n" +
+          "for (foo in _ref) {\n" +
+          "    if (!_ref.hasOwnProperty(foo)) {\n" +
+          "        continue;\n" +
+          "    }\n" +
+          "    console.log(foo);\n" +
+          "}\n")]
     ];
 
     for (var i = 0; i < tests.length; i++) {
@@ -320,8 +342,8 @@ function runUnitTests() {
         }
         if (a !== b) {
             print("FAIL - Mismatch.");
-            print("got:      " + String(a));
-            print("expected: " + String(b));
+            print("got:      \n" + String(a));
+            print("expected: \n" + String(b));
             print();
         }
     }
